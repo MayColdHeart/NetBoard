@@ -8,6 +8,7 @@
     container_name: netboard_api
     hostname: netboard_api_host
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development # todo: change to production
       - POSTGRES_CONNECTION_STRING=${POSTGRES_CONNECTION_STRING}
     depends_on:
       db:
