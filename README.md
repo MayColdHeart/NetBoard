@@ -7,3 +7,15 @@ O NetBoard é um dashboard de rede voltado para a análise da comunicação entr
 ##### Linguagens utilizadas
 - Python
 - ..
+
+## Setup
+### Backend
+#### User Secrets
+Mude o valor de 'Password'.
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Database=NetboardDB;Username=postgres;Password=postgres"
+  }
+}
+```
