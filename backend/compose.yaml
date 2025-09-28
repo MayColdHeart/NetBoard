@@ -1,0 +1,35 @@
+﻿services:
+  api:
+    build:
+      context: ./NetboardApi
+      target: final
+    ports:
+      - "5043:8080"
+    container_name: netboard_api
+    hostname: netboard_api_host
+    environment:
+      - POSTGRES_CONNECTION_STRING=${POSTGRES_CONNECTION_STRING}
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+  db:
+    image: postgis/postgis
+    ports:
+      - "5432:5432"
+    container_name: netboard_db
+    hostname: netboard_db_host
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - netboard_data:/var/lib/postgresql/data
+
+volumes:
+  netboard_data:
