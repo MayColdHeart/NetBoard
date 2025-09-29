@@ -23,8 +23,10 @@ protocol_counts = defaultdict(Counter)
 _lock = threading.Lock()
 running = True
 
-def map_port_to_proto(port):
-    return PORT_PROTO.get(port, str(port))
+def map_port_to_proto(port: int) -> str | None: #(6000–6010)
+    if 6000 <= port <= 6010:
+        return "FTP-DATA"
+    return PORT_PROTO.get(port)
 
 def detect_app_by_payload(payload_bytes):
     if not payload_bytes:
