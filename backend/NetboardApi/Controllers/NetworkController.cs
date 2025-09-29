@@ -24,4 +24,10 @@ public class NetworkController : ControllerBase
     {
         return Ok("HELLO WORLD!");
     }
+    
+    [HttpPost]
+    public IActionResult Post()
+    {
+        return Ok("HELLO WORLD!");
+    }
 }

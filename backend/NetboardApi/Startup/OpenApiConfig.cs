@@ -12,7 +12,7 @@ public static class OpenApiConfig
             app.MapOpenApi();
             app.MapScalarApiReference((options) =>
             {
-                options.Title = "Bike Routes API";
+                options.Title = "Netboard API";
                 options.Theme = ScalarTheme.BluePlanet;
                 options.DarkMode = true;
                 options.DefaultHttpClient = new KeyValuePair<ScalarTarget, ScalarClient>(ScalarTarget.Python, ScalarClient.Requests);

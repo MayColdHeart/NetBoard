@@ -15,7 +15,7 @@
         condition: service_healthy
         restart: true
   db:
-    image: postgis/postgis
+    image: postgres
     ports:
       - "5432:5432"
     container_name: netboard_db
