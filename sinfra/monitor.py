@@ -175,7 +175,7 @@ def print_report(interval):
             if not sorted_keys:
                 print("no response..")
             else:
-                print(f"{'IP':<18} {'MAC':<20} {'Up':>12} {'Down':>12} {'Total':>12}  Protocols (top)")
+                print(f"{'IP':<18} {'Up':>12} {'Down':>12} {'Total':>12}  Protocols (top)")
                 print("-"*100)
                 for k in sorted_keys:
                     ip, mac = k
