@@ -1,0 +1,6 @@
+services: 
+  http_service: 
+    build:
+     context: demo_http
+    ports: 
+      - '8000:80'
