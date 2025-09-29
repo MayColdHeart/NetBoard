@@ -1,3 +1,0 @@
-# NetBoard
-
-Network dashboard
