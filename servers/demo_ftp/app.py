@@ -37,7 +37,7 @@ server.max_cons = 256
 server.max_cons_per_ip = 5
 
 # logging mode
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 # start ftp server
 try:

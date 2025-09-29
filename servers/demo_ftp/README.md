@@ -1,4 +1,5 @@
 # Connection/Login
+- file protocol: `ftp`
 - hostname: `localhost`
 - port: `21`
 - username: `guest`
