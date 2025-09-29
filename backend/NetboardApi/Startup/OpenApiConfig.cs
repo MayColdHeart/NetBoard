@@ -15,7 +15,7 @@ public static class OpenApiConfig
                 options.Title = "Bike Routes API";
                 options.Theme = ScalarTheme.BluePlanet;
                 options.DarkMode = true;
-                options.DefaultHttpClient = new KeyValuePair<ScalarTarget, ScalarClient>(ScalarTarget.JavaScript, ScalarClient.Axios);
+                options.DefaultHttpClient = new KeyValuePair<ScalarTarget, ScalarClient>(ScalarTarget.Python, ScalarClient.Requests);
             });
         }
     }
