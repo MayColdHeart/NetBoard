@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetboardApi", "NetboardApi\NetboardApi.csproj", "{3BF86736-E595-4B0A-BEAB-45F08955BEB7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A07E08E5-0394-46C2-AF80-1D10FE02225D}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BF86736-E595-4B0A-BEAB-45F08955BEB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BF86736-E595-4B0A-BEAB-45F08955BEB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BF86736-E595-4B0A-BEAB-45F08955BEB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BF86736-E595-4B0A-BEAB-45F08955BEB7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
