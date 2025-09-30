@@ -20,44 +20,48 @@ ChartJS.register(
   Legend
 );
 
-const data = {
-  labels: Array.from({ length: 20 }, (_, i) => i + 1),
-  datasets: [
-    {
-      label: 'Dados 1',
-      data: Array.from({ length: 20 }, () => Math.random() * 100),
-      borderColor: '#4dc0b5',
-      backgroundColor: 'rgba(77, 192, 181, 0.2)',
-      tension: 0.3
-    },
-    {
-      label: 'Dados 2',
-      data: Array.from({ length: 20 }, () => Math.random() * 80 + 20),
-      borderColor: '#3b82f6',
-      backgroundColor: 'rgba(59, 130, 246, 0.2)',
-      tension: 0.3
-    },
-  ],
-};
+export default function MultiLineChart({ trafficHistory }) {
+  const labels = trafficHistory.map(w => 
+    new Date(w.createdAt).toLocaleTimeString()
+  );
 
-const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    decimation: {
-      enabled: true,
-      algorithm: 'lttb',
-      samples: 10
-    },
-  },
-  scales: {
-    x: { display: true, title: { display: true, text: 'Eixo X' } },
-    y: { display: true, title: { display: true, text: 'Eixo Y' } },
-  },
-};
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: 'Upload (Kbps)',
+        data: trafficHistory.map(w => w.uploadSizeKbps),
+        borderColor: '#4dc0b5',
+        backgroundColor: 'rgba(77, 192, 181, 0.2)',
+        tension: 0.3
+      },
+      {
+        label: 'Download (Kbps)',
+        data: trafficHistory.map(w => w.downloadSizeKbps),
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+        tension: 0.3
+      },
+      {
+        label: 'Total (Kbps)',
+        data: trafficHistory.map(w => w.totalSizeKbps),
+        borderColor: '#f87171',
+        backgroundColor: 'rgba(248, 113, 113, 0.2)',
+        tension: 0.3
+      }
+    ]
+  };
 
-export default function MultiLineChart() {
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+    },
+    scales: {
+      x: { title: { display: true, text: 'Tempo' } },
+      y: { title: { display: true, text: 'Kbps' } },
+    },
+  };
+
   return <Line data={data} options={options} />;
 }

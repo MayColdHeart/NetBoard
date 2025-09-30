@@ -3,7 +3,7 @@ import './DashBoard.css'
 import PieChart from "./grafic/PieChart";
 import MultiLineChart from './grafic/MultLines';
 
-export default function DashBoard(){
+export default function DashBoard({ trafficHistory }){
 
 return(
 
@@ -34,7 +34,7 @@ return(
                     <h2>
                         Gráfico de tempo
                     </h2>
-                    <MultiLineChart/>
+                    <MultiLineChart trafficHistory={trafficHistory} />
 
                 </li>
 

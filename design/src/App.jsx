@@ -11,6 +11,8 @@ import Control from './components/Control/Control'
 
 function App() {
   const [trafficData, setTrafficData] = useState([]);
+  const [trafficHistory, setTrafficHistory] = useState([]);
+
   const connectionRef = useRef(null);
 
   // Busca inicial via GET
@@ -64,6 +66,8 @@ function App() {
           }];
         }
       });
+
+      setTrafficHistory(prev => [...prev, trafficWindow]);
     };
 
     connection.on('ReceiveTraffic', handleTraffic);
@@ -96,7 +100,7 @@ function App() {
 
     <>
       <Aside/>
-      <DashBoard/>
+      <DashBoard trafficHistory={trafficHistory}/>
       <Control/>
     </>
 
