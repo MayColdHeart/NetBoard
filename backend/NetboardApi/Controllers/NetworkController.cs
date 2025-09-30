@@ -6,11 +6,6 @@ namespace NetboardApi.Controllers;
 [Route("[controller]")]
 public class NetworkController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
     private readonly ILogger<NetworkController> _logger;
 
     public NetworkController(ILogger<NetworkController> logger)
