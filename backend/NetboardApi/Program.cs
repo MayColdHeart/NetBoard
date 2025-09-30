@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NetboardApi.Data;
+using NetboardApi.Hubs;
 using NetboardApi.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,8 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddPostgresDbContext(builder.Configuration);
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -25,6 +28,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.MapHub<NetworkTrafficHub>("/network-hub");
 app.MapControllers();
 
 app.Run();
