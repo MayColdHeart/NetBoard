@@ -4,5 +4,5 @@ namespace NetboardApi.Interfaces;
 
 public interface INetworkService
 {
-    Task CreateTrafficWindowAsync(CreateTrafficWindowDto trafficWindowDto);
+    Task<TrafficWindowDto> CreateTrafficWindowAsync(CreateTrafficWindowDto createTrafficWindowDto);
 }
