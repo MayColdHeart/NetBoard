@@ -21,13 +21,14 @@ public class NetworkController : ControllerBase
     
     [HttpGet("traffic")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
-        return Ok("HELLO WORLD!");
+        var devicesTraffic = await _networkService.GetTotalDeviceTrafficListAsync();
+        return Ok(devicesTraffic);
     }
     
-    [HttpPost("traffic")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPost("traffic-window")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> Post([FromBody] CreateTrafficWindowDto trafficWindowDto)
     {
         if (string.IsNullOrWhiteSpace(trafficWindowDto.DeviceIp))

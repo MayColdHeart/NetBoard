@@ -3,6 +3,7 @@ using NetboardApi.Dtos.TrafficWindowDtos;
 using NetboardApi.Interfaces;
 using NetboardApi.Mappers;
 using NetboardApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace NetboardApi.Services;
 
@@ -62,5 +63,22 @@ public class NetworkService : INetworkService
 
         var createdTrafficWindowDto = trafficWindowModel.ToTrafficWindowDto();
         return createdTrafficWindowDto;
+    }
+
+    public async Task<List<TotalDeviceTrafficDto>> GetTotalDeviceTrafficListAsync()
+    {
+        var devicesTraffic = await _dbContext.TrafficWindows
+            .AsNoTracking()
+            .GroupBy(tw => new { tw.Device.Ip, tw.Protocol.Name })
+            .Select(g => new TotalDeviceTrafficDto
+            {
+                DeviceIp = g.Key.Ip,
+                Protocol = g.Key.Name,
+                TotalSizeKbps = g.Sum(tw => tw.TotalSizeKbps),
+                UploadSizeKbps = g.Sum(tw => tw.UploadSizeKbps),
+                DownloadSizeKbps = g.Sum(tw => tw.DownloadSizeKbps)
+            })
+            .ToListAsync();
+        return devicesTraffic;
     }
 }
