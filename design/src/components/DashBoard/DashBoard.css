@@ -1,0 +1,94 @@
+.dash-board{
+    height: 100%;
+    width: 55%;
+}
+
+/*Header*/
+.dash-header{
+    height: 30%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.summary{
+    height: 90%;
+    width: 95%;
+    border-radius: 20px;
+    background-color: var(---main--color-hover);
+}
+
+/*DashBoard*/
+.dash-data{
+    height: 70%;
+    width: 100%;
+}
+
+.dash-data ul{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.dash-data ul li{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+/*Bloco pequeno*/
+.min-block{
+    height: 90%;
+    width: 40%;
+    border-radius: 40px;
+    background-color: var(--main-color);
+    box-shadow: 0 20px 16px rgba(0,0,0,0.20);
+    transition: .5s ease;
+}
+
+.min-block:hover{
+    transform: scale(1.04);
+}
+
+/*Bloco médio*/
+.medium-block{
+    height: 90%;
+    width: 50%;
+    border-radius: 40px;
+    background-color: var(--main-color);
+    box-shadow: 0 20px 16px rgba(0,0,0,0.15);
+    transition: .5s ease;
+}
+
+.medium-block:hover{
+    transform: scale(1.04);
+}
+
+/*Blocos no modo escuro*/
+
+body.dark-mode .min-block,
+body.dark-mode .medium-block {
+  background-color: rgb(1, 1, 30);
+}
+
+body.dark-mode .summary {
+    background-color: rgb(75,75, 120);
+}
+
+body.dark-mode .dash-board::-webkit-scrollbar-thumb{
+    background-color: rgb(75,75, 120);
+}
+
+/*Desce a tela*/
+.dash-board::-webkit-scrollbar{
+  width: 10px;
+}
+
+.dash-board::-webkit-scrollbar-thumb {
+  background-color: var(--main-color);
+  border-radius: 10px;
+  cursor: pointer;
+}

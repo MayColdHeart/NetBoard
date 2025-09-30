@@ -1,0 +1,141 @@
+.dash-aside{
+    height: 100%;
+    width: 20%;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.dash-aside h1{
+    letter-spacing: 1px;
+    font-size: 2.5rem;
+    font-weight: 900;
+    text-align: center;
+}
+
+.sidebar {
+    height: 50%;
+    width: 80px;
+    margin-left: 50px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    background-color: var(--main-color);
+    overflow: hidden;
+    transition: width 0.95s ease;
+}
+
+.sidebar:hover {
+    width: 215px;
+}
+
+.side-item span {
+    opacity: 0;
+    white-space: nowrap;
+    margin-left: 20px;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar:hover .side-item span {
+    opacity: 1;
+}
+
+/*itens da lateral*/
+.side-item{
+    height: 50%;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+}
+
+.side-item:hover{
+    background-color: rgb(225, 225, 255);
+}
+
+.side-item img{
+    width: 3rem;
+    margin-left: 15px;
+}
+
+/*Filtro*/
+.bg-control-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.control-panel {
+    position: relative;
+    top: 140px;
+    width: 400px;
+    max-width: 90%;
+    padding: 20px;
+    border-radius: 20px;
+    background-color: var(---main--color-hover);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.control-panel h2{
+    text-align: center;
+}
+
+.control-panel form{
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+}
+
+.control-panel label{
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-align: center;
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+}
+
+.control-panel input{
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.control-panel button{
+    font-weight: 800;
+    font-size: 1.2rem;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgb(180, 180, 245);
+    transition: .4s;
+}
+
+.control-panel button:hover{
+    background-color: rgb(140, 140, 245);
+}
+
+/*Modo escuro*/
+body.dark-mode .sidebar{
+    background-color: var(--dark-color);
+}
+
+body.dark-mode .side-item:hover{
+    background-color: var(---dark--color-hover);
+}
+
+body.dark-mode .control-panel input{
+    background-color: rgb(200, 200, 226);
+}
+
+body.dark-mode .filter-control:hover{
+    background-color: var(---dark--color-hover);
+}

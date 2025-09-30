@@ -1,0 +1,74 @@
+*{
+  font-family: Arial;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root{
+  height: 100vh;
+  width: 100vw;
+  background-color: ghostwhite;
+}
+
+body, #root{
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+:root{
+  --main-color: rgb(235, 235, 255);
+  ---main--color-hover: rgb(205, 205, 255);
+  --dark-color: rgb(85, 85, 120);
+  ---dark--color-hover: rgb(65, 65, 120);
+}
+
+ul{
+  list-style: none;
+}
+
+a{
+  color: black;
+  text-decoration: none;
+}
+
+button{
+  cursor: pointer;
+  border: none;
+}
+
+button:focus{
+  outline: none;
+}
+
+input{
+  border: none;
+}
+
+input:focus{
+  outline: none;
+}
+
+/*Modo escuro*/
+body.dark-mode {
+  background-color: rgb(0, 0, 20);
+  color: white;
+}
+
+body.dark-mode .dash-aside,
+body.dark-mode .dash-board,
+body.dark-mode .dash-control {
+  background-color: rgb(0, 0, 20);
+}
+
+/*Desce a tela*/
+::-webkit-scrollbar{
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--main-color);
+  border-radius: 4px;
+  cursor: pointer;
+}
