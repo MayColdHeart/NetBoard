@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using NetboardApi.Data;
 using NetboardApi.Dtos.TrafficWindowDtos;
+using NetboardApi.Hubs;
 using NetboardApi.Interfaces;
 using NetboardApi.Models;
 
@@ -12,11 +14,16 @@ public class NetworkController : ControllerBase
 {
     private readonly ILogger<NetworkController> _logger;
     private readonly INetworkService _networkService;
+    private readonly IHubContext<NetworkTrafficHub, INetworkTrafficClient> _hubContext;
 
-    public NetworkController(ILogger<NetworkController> logger, INetworkService networkService)
+    public NetworkController(
+        ILogger<NetworkController> logger, 
+        INetworkService networkService,
+        IHubContext<NetworkTrafficHub, INetworkTrafficClient> hubContext)
     {
         _logger = logger;
         _networkService = networkService;
+        _hubContext = hubContext;
     }
     
     [HttpGet("traffic")]
@@ -40,7 +47,9 @@ public class NetworkController : ControllerBase
             return BadRequest("ProtocolName is required.");
         }
         
-        await _networkService.CreateTrafficWindowAsync(trafficWindowDto);
+        var createdTrafficWindow = await _networkService.CreateTrafficWindowAsync(trafficWindowDto);
+        await _hubContext.Clients.All.ReceiveTraffic(createdTrafficWindow);
+        
         return Created();
     }
 }
