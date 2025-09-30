@@ -1,13 +1,17 @@
+
 import time
 import threading
 from collections import defaultdict, Counter
 from scapy.all import sniff, IP, TCP, UDP, ICMP, Raw
 import signal
 import sys
+from typing import Optional
+import requests
+
+BACKEND_URL = "http://localhost:5000/api/monitor"
 
 INTERVAL = 5
 MAX_TABLE_ROWS = 200 
-
 PORT_PROTO = {
     8000: "HTTP",
     21: "FTP",     
@@ -17,13 +21,15 @@ PORT_PROTO = {
     25: "SMTP",
 }
 
+
+
 bytes_sent = defaultdict(int)
 bytes_recv = defaultdict(int)
 protocol_counts = defaultdict(Counter)
 _lock = threading.Lock()
 running = True
 
-def map_port_to_proto(port: int) -> str | None: #(6000–6010)
+def map_port_to_proto(port: int) -> Optional[str]: #(6000–6010)
     if 6000 <= port <= 6010:
         return "FTP-DATA"
     return PORT_PROTO.get(port)
@@ -54,8 +60,6 @@ def process_packet(pkt):
             src_ip = ip.src
             dst_ip = ip.dst
             size = len(pkt)
-
-   
             bytes_sent[src_ip] += size
             bytes_recv[dst_ip] += size
 
@@ -126,6 +130,8 @@ def print_report(interval):
                 return bytes_sent.get(k, 0) + bytes_recv.get(k, 0)
             sorted_keys = sorted(keys, key=total_bytes, reverse=True)[:MAX_TABLE_ROWS]
 
+            report_data = []
+
             if not sorted_keys:
                 print("no response..")
             else:
@@ -141,13 +147,30 @@ def print_report(interval):
                     prot_counter = protocol_counts.get(ip, Counter())
                     top_protocols = ", ".join([f"{p}({c})" for p, c in prot_counter.most_common(5)])
                     print(f"{ip:<18} {up_str:>12} {down_str:>12} {total_str:>12}  {top_protocols}")
+                    # Adiciona ao relatório para envio
+                    report_data.append({
+                        "ip": ip,
+                        "up_Bps": up_b // interval,  # bytes por segundo
+                        "down_Bps": down_b // interval,
+                        "total_Bps": total_b // interval,
+                        "protocols": dict(prot_counter.most_common(5)),
+                        "timestamp": time.strftime('%Y-%m-%d %H:%M:%S')
+                    })
             print("="*100)
+
+            # Envia os dados para o backend
+            if report_data:
+                try:
+                    response = requests.post(BACKEND_URL, json=report_data, timeout=3)
+                    if response.status_code != 200:
+                        print(f"[WARN] Falha ao enviar dados para backend: {response.status_code}")
+                except Exception as e:
+                    print(f"[ERRO] Não foi possível enviar dados ao backend: {e}")
 
             bytes_sent = defaultdict(int)
             bytes_recv = defaultdict(int)
             protocol_counts = defaultdict(Counter)
-
-def handle_sigint():
+def handle_sigint(signum, frame):
     global running
     print("\nfinishing")
     running = False
