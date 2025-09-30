@@ -1,142 +1,109 @@
-.dash-control{
-    position: relative;
-    height: 100%;
-    width: 25%;
-    display: flex;
-    flex-direction: column;
+.dash-control {
+  position: relative;
+  height: 100%;
+  width: 25%;
+  display: flex;
+  flex-direction: column;
 }
 
-/*DrilDown*/
-.control-table-container{
-    height: 550px;
-    width: 95%;
-    display: flex;
-    flex-direction: column;
-    border-radius: 20px;
-    margin-top: 10px;
-    padding: 20px;
-    background-color: var(---main--color-hover);
+.control-table-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  margin-top: 10px;
+  padding: 20px;
+  background-color: var(---main--color-hover);
+  overflow-y: auto;
 }
 
-.control-table-header{
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
+.control-table-header,
+.device-row,
+.device-row-details div {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 10px;
+  text-align: center;
 }
 
-.control-table-header h3{
-    font-size: 16px;
+.control-table-header {
+  font-weight: bold;
+  font-size: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid gray;
 }
 
-.control-table-content{
-    display: flex;
-    font-size: 14px;
-    text-align: center;
-    margin-top: 20px;
-    flex-direction: column;
+.device-row {
+  margin-top: 15px;
+  cursor: pointer;
+  padding: 5px 0;
 }
 
-.device-row{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 40px;
-    gap: 10px;
+.device-row-details {
+  margin-top: 5px;
+  padding: 10px;
+  background-color: var(--main-color);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.device-row-details{
-    display: flex;
-    justify-content: space-between;
+.kbps {
+  font-weight: bold;
+  font-size: 12px;
 }
 
-.device-row-details{
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px;
-    background-color: var(--main-color);
-    padding: 10px;
-    border-radius: 10px;
+.control-device-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+  flex-wrap: wrap;
 }
 
-.device-row-details div{
-    display: flex;
-    justify-content: space-between;
+.device-card {
+  padding: 12px;
+  border-radius: 10px;
+  background-color: var(--main-color);
+  transition: .6s;
 }
 
-.kbps{
-    font-weight: bolder;
-    font-size: 10px;
+.device-card:hover {
+  transform: translateY(-5px);
+  background-color: var(---main--color-hover);
 }
 
-/*Filtrar por dispositivo*/
-.control-device-buttons{
-    position: absolute;
-    bottom: 10px;
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
+.device-card img {
+  width: 2rem;
 }
 
-.device-card{
-    padding: 12px;
-    border-radius: 10px;
-    background-color: var(--main-color);
-    transition: .6s;
+.device-popup {
+  position: absolute;
+  bottom: 100px;
+  left: 8%;
+  width: 85%;
+  display: flex;
+  gap: 30px;
+  justify-content: space-around;
+  padding: 20px;
+  border-radius: 20px;
+  flex-direction: column;
+  background-color: var(--main-color);
 }
 
-.device-card:hover{
-    transform: translateY(-10px);
-    background-color: var(---main--color-hover);
+.device-popup h3 {
+  font-size: 1.4rem;
+  text-align: center;
 }
 
-.device-card img{
-    width: 2rem;
+.device-popup button {
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: rgb(180, 180, 245);
+  transition: .6s;
 }
 
-/*Por dispositivo*/
-.device-popup{
-    position: absolute;
-    bottom: 100px;
-    left: 8%;
-    width: 85%;
-    display: flex;
-    gap: 30px;
-    justify-content: space-around;
-    padding: 20px;
-    border-radius: 20px;
-    flex-direction: column;
-    background-color: var(--main-color);
-}
-
-.device-popup h3{
-    font-size: 1.4rem;
-    text-align: center;
-}
-
-.device-popup button{
-    font-weight: bold;
-    padding: 10px;
-    border-radius: 10px;
-    background-color: rgb(180, 180, 245);
-    transition: .6s;
-}
-
-.device-popup button:hover{
-    background-color: var(---main--color-hover);
-}
-
-/*Tema escuro*/
-body.dark-mode .filter-control, body.dark-mode .device-popup
-body.dark-mode .control-panel, body.dark-mode .control-table-container,
-body.dark-mode .control-card, body.dark-mode .control-panel,
-body.dark-mode .device-popup, body.dark-mode .control-tabel {
-    color: white;
-    background-color: var(--dark-color);
-}
-
-body.dark-mode .device-card:hover{
-    background-color: var(---dark--color-hover);
-}
-
-body.dark-mode .device-row-details div{
-    color: black;
+.device-popup button:hover {
+  background-color: var(---main--color-hover);
 }
