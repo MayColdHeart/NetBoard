@@ -24,4 +24,8 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Dtos\TrafficWindowDtos\TrafficPerDeviceDto.cs" />
+    </ItemGroup>
+
 </Project>
