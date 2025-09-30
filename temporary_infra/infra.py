@@ -1,27 +1,40 @@
 from scapy.all import sniff, IP, TCP
 from collections import defaultdict
+import socket
 import time
+import requests
 
 INTERVAL = 5  # report interval in seconds
 
 # Map server ports to protocol names
 PORT_PROTO = {
     21: "FTP",
-    60000: "FTP-DATA", 60001: "FTP-DATA", 60002: "FTP-DATA",
-    60003: "FTP-DATA", 60004: "FTP-DATA", 60005: "FTP-DATA",
-    60006: "FTP-DATA", 60007: "FTP-DATA", 60008: "FTP-DATA",
-    60009: "FTP-DATA", 60010: "FTP-DATA",
     8000: "HTTP",
 }
+FTP_DATA_RANGE = range(60000, 60011)
 
-# Data storage: {(ip, protocol): [upload_bytes, download_bytes]}
+# Data storage: {(external_ip, protocol): [upload_bytes, download_bytes]}
 traffic = defaultdict(lambda: [0, 0])
 
+# Detect local IP
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # connect to a dummy external address
+        s.connect(("8.8.8.8", 80))
+        return s.getsockname()[0]
+    finally:
+        s.close()
+
+LOCAL_IP = get_local_ip()
+print(f"Local IP detected: {LOCAL_IP}")
+
 def map_port_to_proto(port: int):
-    # Handle FTP-DATA range 60000–60010
-    if 60000 <= port <= 60010:
+    if port in PORT_PROTO:
+        return PORT_PROTO[port]
+    if port in FTP_DATA_RANGE:
         return "FTP-DATA"
-    return PORT_PROTO.get(port)
+    return None
 
 def process_packet(pkt):
     if IP not in pkt or TCP not in pkt:
@@ -35,14 +48,18 @@ def process_packet(pkt):
 
     size = len(pkt)
 
-    # Determine upload/download relative to IP
-    # If the source IP is the server, it's upload; else download
-    traffic[(ip.src, proto)][0] += size  # upload
-    traffic[(ip.dst, proto)][1] += size  # download
+    # Only count traffic relative to external IPs
+    if ip.src == LOCAL_IP:
+        # Upload to external IP
+        traffic[(ip.dst, proto)][0] += size
+    elif ip.dst == LOCAL_IP:
+        # Download from external IP
+        traffic[(ip.src, proto)][1] += size
 
 def human_readable_kbps(bytes_count, interval):
+    # Return decimal Kbps instead of rounding
     bits_per_sec = (bytes_count * 8) / interval
-    return round(bits_per_sec / 1000)
+    return bits_per_sec / 1000  # float Kbps
 
 def report():
     global traffic
@@ -52,27 +69,41 @@ def report():
             print("No traffic detected...")
             continue
 
-        report_data = []
+        rows_printed = False
 
         print("\nTraffic report:")
-        print(f"{'IP':<15} {'Protocol':<10} {'Up(Kbps)':>10} {'Down(Kbps)':>12} {'Total(Kbps)':>12}")
-        print("-" * 600)
-        for (ip, proto), (up, down) in traffic.items():
+        print(f"{'External IP':<15} {'Protocol':<10} {'Up(Kbps)':>10} {'Down(Kbps)':>12} {'Total(Kbps)':>12}")
+        print("-" * 70)
+
+        for (ip, proto), (up, down) in list(traffic.items()):
             total = up + down
             up_kbps = human_readable_kbps(up, INTERVAL)
             down_kbps = human_readable_kbps(down, INTERVAL)
             total_kbps = human_readable_kbps(total, INTERVAL)
 
-            print(f"{ip:<15} {proto:<10} {up_kbps:>10} {down_kbps:>12} {total_kbps:>12}")
+            # Only print/post if there is actual traffic
+            if total_kbps > 0:
+                rows_printed = True
+                print(f"{ip:<15} {proto:<10} {up_kbps:>10.2f} {down_kbps:>12.2f} {total_kbps:>12.2f}")
 
-            # Compatible with CreateTrafficWindowDto
-            report_data.append({
-                "DeviceIp": ip,
-                "ProtocolName": proto,
-                "UploadSizeKbps": up_kbps,
-                "DownloadSizeKbps": down_kbps,
-                "TotalSizeKbps": total_kbps
-            })
+                try:
+                    resp = requests.post(
+                        "http://localhost:5043/network/traffic-window",
+                        headers={"Content-Type": "application/json"},
+                        json={
+                            "deviceIp": ip,
+                            "protocolName": proto,
+                            "uploadSizeKbps": up_kbps,
+                            "downloadSizeKbps": down_kbps,
+                            "totalSizeKbps": total_kbps
+                        }
+                    )
+                    # print(f"POST of ip {ip} done. HTTP STATUS {resp.status_code}.")
+                except Exception as e:
+                    print(f"Failed to POST data for {ip} ({proto}): {e}")
+
+        if not rows_printed:
+            print("No traffic detected...")
 
         # Reset counters for next interval
         traffic.clear()
