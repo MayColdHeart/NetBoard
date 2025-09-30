@@ -27,7 +27,7 @@ public class NetworkController : ControllerBase
     }
     
     [HttpGet("traffic")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<TotalDeviceTrafficDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Get()
     {
         var devicesTraffic = await _networkService.GetTotalDeviceTrafficListAsync();

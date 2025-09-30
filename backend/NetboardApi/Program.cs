@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NetboardApi.Constants;
 using NetboardApi.Data;
 using NetboardApi.Hubs;
 using NetboardApi.Startup;
@@ -18,6 +19,8 @@ builder.Services.AddSignalR();
 
 builder.Services.AddDependencyInjectionServices();
 
+builder.Services.AddConfiguredCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,6 +31,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(CorsPolicyConstants.AllowSpecificOrigins);
 
 app.UseAuthorization();
 
