@@ -108,14 +108,10 @@ def process_packet(pkt):
 
 def human_readable_rate(bytes_count, interval):
     if interval <= 0:
-        return "0 bps"
+        return "0 Kbps"
     bits_per_sec = (bytes_count * 8) / interval
-    if bits_per_sec >= 1_000_000:
-        return f"{bits_per_sec/1_000_000:.2f} Mbps"
-    elif bits_per_sec >= 1_000:
-        return f"{bits_per_sec/1_000:.2f} Kbps"
-    else:
-        return f"{bits_per_sec:.2f} bps"
+    kbps = bits_per_sec / 1_000
+    return f"{kbps:.2f} Kbps"
 
 def print_report(interval):
     global bytes_sent, bytes_recv, protocol_counts
@@ -148,11 +144,14 @@ def print_report(interval):
                     top_protocols = ", ".join([f"{p}({c})" for p, c in prot_counter.most_common(5)])
                     print(f"{ip:<18} {up_str:>12} {down_str:>12} {total_str:>12}  {top_protocols}")
                     # Adiciona ao relatório para envio
+                    up_kbps = (up_b * 8) / interval / 1000
+                    down_kbps = (down_b * 8) / interval / 1000
+                    total_kbps = (total_b * 8) / interval / 1000
                     report_data.append({
                         "ip": ip,
-                        "up_Bps": up_b // interval,  # bytes por segundo
-                        "down_Bps": down_b // interval,
-                        "total_Bps": total_b // interval,
+                        "up_Kbps": round(up_kbps, 2),
+                        "down_Kbps": round(down_kbps, 2),
+                        "total_Kbps": round(total_kbps, 2),
                         "protocols": dict(prot_counter.most_common(5)),
                         "timestamp": time.strftime('%Y-%m-%d %H:%M:%S')
                     })
