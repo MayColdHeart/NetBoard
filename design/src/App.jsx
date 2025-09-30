@@ -100,7 +100,7 @@ function App() {
 
     <>
       <Aside/>
-      <DashBoard trafficHistory={trafficHistory}/>
+      <DashBoard trafficData={trafficData} trafficHistory={trafficHistory} />
       <Control/>
     </>
 
