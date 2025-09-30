@@ -1,3 +1,4 @@
+import threading
 from scapy.all import sniff, IP, TCP
 from collections import defaultdict
 import socket
@@ -6,7 +7,6 @@ import requests
 
 INTERVAL = 5  # report interval in seconds
 
-# Map server ports to protocol names
 PORT_PROTO = {
     21: "FTP",
     8000: "HTTP",
@@ -15,12 +15,11 @@ FTP_DATA_RANGE = range(60000, 60011)
 
 # Data storage: {(external_ip, protocol): [upload_bytes, download_bytes]}
 traffic = defaultdict(lambda: [0, 0])
+traffic_lock = threading.Lock()  # Lock to avoid race conditions
 
-# Detect local IP
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        # connect to a dummy external address
         s.connect(("8.8.8.8", 80))
         return s.getsockname()[0]
     finally:
@@ -49,66 +48,54 @@ def process_packet(pkt):
     size = len(pkt)
 
     # Only count traffic relative to external IPs
-    if ip.src == LOCAL_IP:
-        # Upload to external IP
-        traffic[(ip.dst, proto)][0] += size
-    elif ip.dst == LOCAL_IP:
-        # Download from external IP
-        traffic[(ip.src, proto)][1] += size
+    with traffic_lock:
+        if ip.src == LOCAL_IP:
+            traffic[(ip.dst, proto)][0] += size
+        elif ip.dst == LOCAL_IP:
+            traffic[(ip.src, proto)][1] += size
 
 def human_readable_kbps(bytes_count, interval):
-    # Return decimal Kbps instead of rounding
     bits_per_sec = (bytes_count * 8) / interval
     return bits_per_sec / 1000  # float Kbps
 
 def report():
-    global traffic
     while True:
         time.sleep(INTERVAL)
-        if not traffic:
+        with traffic_lock:
+            items = list(traffic.items())
+            traffic.clear()  # Reset safely while locked
+
+        if not items:
             print("No traffic detected...")
             continue
-
-        rows_printed = False
 
         print("\nTraffic report:")
         print(f"{'External IP':<15} {'Protocol':<10} {'Up(Kbps)':>10} {'Down(Kbps)':>12} {'Total(Kbps)':>12}")
         print("-" * 70)
 
-        for (ip, proto), (up, down) in list(traffic.items()):
+        for (ip, proto), (up, down) in items:
             total = up + down
             up_kbps = human_readable_kbps(up, INTERVAL)
             down_kbps = human_readable_kbps(down, INTERVAL)
             total_kbps = human_readable_kbps(total, INTERVAL)
 
-            # Only print/post if there is actual traffic
-            if total_kbps > 0:
-                rows_printed = True
-                print(f"{ip:<15} {proto:<10} {up_kbps:>10.2f} {down_kbps:>12.2f} {total_kbps:>12.2f}")
+            print(f"{ip:<15} {proto:<10} {up_kbps:>10.2f} {down_kbps:>12.2f} {total_kbps:>12.2f}")
 
-                try:
-                    resp = requests.post(
-                        "http://localhost:5043/network/traffic-window",
-                        headers={"Content-Type": "application/json"},
-                        json={
-                            "deviceIp": ip,
-                            "protocolName": proto,
-                            "uploadSizeKbps": up_kbps,
-                            "downloadSizeKbps": down_kbps,
-                            "totalSizeKbps": total_kbps
-                        }
-                    )
-                    # print(f"POST of ip {ip} done. HTTP STATUS {resp.status_code}.")
-                except Exception as e:
-                    print(f"Failed to POST data for {ip} ({proto}): {e}")
-
-        if not rows_printed:
-            print("No traffic detected...")
-
-        # Reset counters for next interval
-        traffic.clear()
+            try:
+                resp = requests.post(
+                    "http://localhost:5043/network/traffic-window",
+                    headers={"Content-Type": "application/json"},
+                    json={
+                        "deviceIp": ip,
+                        "protocolName": proto,
+                        "uploadSizeKbps": up_kbps,
+                        "downloadSizeKbps": down_kbps,
+                        "totalSizeKbps": total_kbps
+                    }
+                )
+            except Exception as e:
+                print(f"Failed to POST data for {ip} ({proto}): {e}")
 
 if __name__ == "__main__":
-    import threading
     threading.Thread(target=report, daemon=True).start()
     sniff(prn=process_packet, store=False)
