@@ -14,6 +14,7 @@ public class ProtocolConfig : IEntityTypeConfiguration<Protocol>
 
         builder.Property(p => p.Name)
             .IsRequired();
+        builder.HasIndex(p => p.Name);
 
         builder.Property(p => p.DefaultPort)
             .IsRequired(false);
