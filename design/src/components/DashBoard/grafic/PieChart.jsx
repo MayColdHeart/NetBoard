@@ -17,7 +17,7 @@ const PieChart = () => {
       },
     ],
   };
-
+    
   const options = {
     responsive: true,
     plugins: {
