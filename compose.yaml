@@ -1,7 +1,21 @@
-﻿services:
+services: 
+  http_service: 
+    build:
+     context: servers/demo_http
+    ports: 
+      - '8000:80'
+  ftp_service:
+    build:
+      context: servers/demo_ftp
+    ports:
+      - '21:21'
+      - "60000-60010:60000-60010" # passive port for file transfer (10 connections max)
+    volumes:
+      - ftp_service_volume:/home/files
+
   api:
     build:
-      context: ./NetboardApi
+      context: backend/NetboardApi
       target: final
     ports:
       - "5043:8080"
@@ -30,7 +44,8 @@
       timeout: 5s
       retries: 10
     volumes:
-      - netboard_data:/var/lib/postgresql/data
+      - netboard_data:/var/lib/postgresql/data 
 
 volumes:
+  ftp_service_volume:
   netboard_data:
