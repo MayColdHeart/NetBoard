@@ -5,7 +5,6 @@ O objetivo do projeto é analisar o tráfego de rede em uma subnet, então é pr
 
 ## ✨ Funcionalidades
 - **Aplicação python**: 
-  - Captura de pacotes e envio a API em janelas de 5 segundo.
 - **API ASP.NET**: 
   - Processamento e persistência do tráfego em banco de dados.
   - Comunicação em tempo real para servir dashboard.
@@ -131,12 +130,9 @@ O objetivo do projeto é analisar o tráfego de rede em uma subnet, então é pr
     - Windows (PowerShell - usando Windows Defender Firewall)
       ```powershell
       # FTP: porta 21 + range 60000–60010
-      New-NetFirewallRule -DisplayName "FTP Control (Local Subnet)" `
-        -Direction Inbound -Protocol TCP -LocalPort 21 `
-        -RemoteAddress LocalSubnet -Action Allow
-
-      New-NetFirewallRule -DisplayName "FTP Passive Range (Local Subnet)" `
-        -Direction Inbound -Protocol TCP -LocalPort 60000-60010 `
+      New-NetFirewallRule -DisplayName "FTP Local Server (Local Subnet)" `
+        -Direction Inbound -Protocol TCP `
+        -LocalPort 21,60000-60010 `
         -RemoteAddress LocalSubnet -Action Allow
 
       # HTTP: porta 8000
@@ -144,9 +140,11 @@ O objetivo do projeto é analisar o tráfego de rede em uma subnet, então é pr
         -Direction Inbound -Protocol TCP -LocalPort 8000 `
         -RemoteAddress LocalSubnet -Action Allow
 
-      # Verificar regra e endereço permitido
-      Get-NetFirewallRule -DisplayName "HTTP Local Server (Local Subnet)" |
-          Get-NetFirewallAddressFilter | Select-Object RemoteAddress
+      # Verificar regras
+      Get-NetFirewallPortFilter |
+          Where-Object { $_.LocalPort -match '^(21|60000-60010|8000)$' } |
+          Get-NetFirewallRule |
+          Select-Object DisplayName, Direction, Enabled
       ```
 
 8. **Acessando servidores em outra máquina** <br>
@@ -157,7 +155,8 @@ Então, substitua `<ip-servidor-local>` pelo seu IP.
     - Acesse com seu browser 
     - `http://<ip-servidor-local>:8000/docs`
   - FTP:
-    - Utilize algum cliente FTP como o FileZilla (Linux e Windows) ou WinSCP (Windows)
+    - Utilize algum cliente FTP com suporte a modo passivo e comando `EPSV`, como o `ftp` do bash (Linux) ou WinSCP (Windows)
+      - ⚠ **Exemplos sem suporte**: `ftp` dos terminais Windows não tem suporte ao modo passivo e `FileZilla` no linux não utiliza `EPSV`, mas sim `PASV` para estabelecer conexão, causando falha
     - Hostname: `<ip-servidor-local>`
     - Porta: 21
     - Usuário: guest
@@ -168,7 +167,7 @@ Então, substitua `<ip-servidor-local>` pelo seu IP.
 - Na sua máquina servidor, acesse o dashboard: http://localhost:5173/.
 - Visualize o tráfego.
 
-1.  **Removendo regras do firewall (opcional)**
+1.   **Removendo regras do firewall (opcional)**
   - **Use caso não esteja mais utilizando o projeto**. Assim removendo regras desnecessárias do firewall.
   - Linux (bash - usando UFW)
     ```bash
@@ -179,8 +178,7 @@ Então, substitua `<ip-servidor-local>` pelo seu IP.
   - Windows (PowerShell)
     ```powershell
     # Remover regra pelo DisplayName
-    Remove-NetFirewallRule -DisplayName "FTP Control (Local Subnet)"
-    Remove-NetFirewallRule -DisplayName "FTP Passive Range (Local Subnet)"
+    Remove-NetFirewallRule -DisplayName "FTP Local Server (Local Subnet)"
     Remove-NetFirewallRule -DisplayName "HTTP Local Server (Local Subnet)"
     ```
 
