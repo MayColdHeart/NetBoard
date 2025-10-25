@@ -16,10 +16,35 @@ O objetivo do projeto é analisar o tráfego de rede em uma subnet, então é pr
 
 ## Mídia
 <details>
+  <summary><b>Dashboard</b></summary>
+  <img width="1347" height="597" alt="Dashboard" src="https://github.com/user-attachments/assets/7599d71b-1b6f-4ec1-bf3b-42e3e7c818ff" />
+</details>
+
+<details>
   <summary><b>Arquitetura</b></summary>
   <img width="881" height="814" alt="Arquitetura" src="https://github.com/user-attachments/assets/b720663f-0f9b-4798-9e0c-0a16e79242c3" />
 </details>
 
+<details>
+  <summary><b>API ASP.NET</b></summary>
+  <img width="277" height="265" alt="API ASP.NET" src="https://github.com/user-attachments/assets/19586adc-f8a7-4770-9c14-a972e5e0be58" />
+  <img width="795" height="736" alt="SignalR Hub" src="https://github.com/user-attachments/assets/ffae5394-b9de-4e45-95e0-a19c64794477" />
+</details>
+
+<details>
+  <summary><b>Banco de Dados</b></summary>
+  <img width="828" height="746" alt="Banco de Dados" src="https://github.com/user-attachments/assets/158dfd9c-3928-4553-bd4b-ba3fc62eabda" />
+</details>
+
+<details>
+  <summary><b>Servidor HTTP (FastAPI)</b></summary>
+  
+</details>
+
+<details>
+  <summary><b>Servidor FTP (pyftpdlib)</b></summary>
+  <img width="464" height="353" alt="FTP SERVER" src="https://github.com/user-attachments/assets/16fcc2ab-8009-4929-9000-85355fa2c773" />
+</details>
 
 ## 🛠 Instalação
 ### Pré-requisitos
