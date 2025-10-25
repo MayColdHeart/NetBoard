@@ -16,7 +16,10 @@ Sistema de monitoramento de tráfego em servidores HTTP e FTP, onde é realizado
 
 
 ## Mídia
-*(placehold para imagems)*
+<details>
+  <summary><b>Arquitetura</b></summary>
+  <img width="881" height="814" alt="Arquitetura" src="https://github.com/user-attachments/assets/b720663f-0f9b-4798-9e0c-0a16e79242c3" />
+</details>
 
 
 ## 🛠 Instalação
