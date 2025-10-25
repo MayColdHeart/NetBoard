@@ -38,7 +38,7 @@ O objetivo do projeto é analisar o tráfego de rede em uma subnet, então é pr
 
 <details>
   <summary><b>Servidor HTTP (FastAPI)</b></summary>
-  
+  <img width="1555" height="465" alt="HPTT FastAPI" src="https://github.com/user-attachments/assets/bda47e6d-fde9-4d2d-bd94-cee04284774f" />
 </details>
 
 <details>
