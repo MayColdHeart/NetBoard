@@ -1,6 +1,6 @@
 # 🌐 NetBoard
-Sistema de monitoramento de tráfego em servidores HTTP e FTP, onde é realizado a captura de pacotes a partir da interface de rede da máquina local.
-
+Sistema de monitoramento de tráfego em servidores HTTP e FTP, onde é realizado a captura de pacotes a partir da interface de rede da máquina local. <br>
+O objetivo do projeto é analisar o tráfego de rede em uma subnet, então é preciso de no mínimo dois dispositivos para verificar o funcionamento.
 
 
 ## ✨ Funcionalidades
@@ -33,20 +33,23 @@ Sistema de monitoramento de tráfego em servidores HTTP e FTP, onde é realizado
 1. **Clone o repositório**
     ```bash
     git clone https://github.com/MayColdHeart/NetBoard.git
-    cd Netboard
+    cd NetBoard
     ```
+
 2. **Configure variáveis de ambiente**
     ```
     cp .example.env .env
     ```
    Caso precise, edite a senha do usuário postgres no banco de dados, dentro do arquivo `.env`.
+
 3. **Execute servidores (HTTP e FTP) e API com docker**
     ```bash
     docker compose up
     ```
     Aguarde todos os containers executarem.
+
 4. **Execute o sniffer de pacotes** <br>
-    Em um novo terminal, partir da pasta raíz do reposítório.
+    Em um novo terminal, a partir da pasta raíz do reposítório.
     ```bash
     cd sinfra
     python -m venv venv
@@ -68,24 +71,125 @@ Sistema de monitoramento de tráfego em servidores HTTP e FTP, onde é realizado
     ```bash
     python sinfra.py
     ```
+
 5. **Execute o dashboard** <br>
     Em um novo terminal
     ```bash
     cd design
     npm i
+    npm run dev
     ```
+
 6. **Acesse as aplicações**
+   - Teste o funcionamento de cada servidor localmente, para verificar se tudo está funcionando corretamente.
    - Dashboard: http://localhost:5173/
    - API ASP.NET: http://localhost:5043/scalar/
    - Servidores monitorados
+     - ⚠ O acesso aos servidores de maneira local não serão registrados no dashboard, apenas o tráfego externo de rede.
      - HTTP: http://localhost:8000/docs
-     - FTP: localhost:21
+     - FTP:
+       - Hostname: localhost
+       - Porta: 21
+       - Usuário: guest
+       - Senha: (vazio)
+
+7. **Configurando firewall**
+  - É preciso criar regras no firewall para permitir conexão entre máquinas em rede local, sem que seja exposto o acesso a internet pública.
+  - Para isso, verifique o IP da sua máquina na rede local e a máscara de rede para saber o range de IPs que serão permitidos o acesso.
+  - 🔎 Verifique o IP e a máscara de rede
+    - Linux (bash)
+      ```bash
+      ifconfig
+      ```
+    - Windows (PowerShell ou cmd)
+      ```powershell
+      ipconfig
+      ```
+    - No caso do linux, use alguma calculadora de sub-rede para traduzir para notação CIDR:
+      - Exemplo: IP `192.168.1.5` com máscara `255.255.255.0` → sub-rede `192.168.1.0/24`
+      - Exemplo: IP `172.30.56.27` com máscara `255.255.240.0` → sub-rede `172.30.48.0/20`
+    - Anote o IP da sua máquina (ex: `192.168.1.5`), que será o servidor, e da sub-rede (ex: `192.168.1.0/24`)
+  - Criando regras de firewall
+    - A seguir, serão abertas portas **apenas para a rede local**
+    - Substitua `192.168.0.0/24` pela faixa da sua rede local
+    - Linux (bash - usando UFW)
+      ```bash
+      # Caso inativo, ative o UFW
+      ufw enable
+
+      # FTP (porta 21 + faixa 60000–60010)
+      sudo ufw allow from 192.168.0.0/24 to any port 21 proto tcp
+      sudo ufw allow from 192.168.0.0/24 to any port 60000:60010 proto tcp
+
+      # HTTP (porta 8000)
+      sudo ufw allow from 192.168.0.0/24 to any port 8000 proto tcp
+
+      # Verificar regras
+      sudo ufw status numbered
+      ```
+
+    - Windows (PowerShell - usando Windows Defender Firewall)
+      ```powershell
+      # FTP: porta 21 + range 60000–60010
+      New-NetFirewallRule -DisplayName "FTP Control (Local Subnet)" `
+        -Direction Inbound -Protocol TCP -LocalPort 21 `
+        -RemoteAddress LocalSubnet -Action Allow
+
+      New-NetFirewallRule -DisplayName "FTP Passive Range (Local Subnet)" `
+        -Direction Inbound -Protocol TCP -LocalPort 60000-60010 `
+        -RemoteAddress LocalSubnet -Action Allow
+
+      # HTTP: porta 8000
+      New-NetFirewallRule -DisplayName "HTTP Local Server (Local Subnet)" `
+        -Direction Inbound -Protocol TCP -LocalPort 8000 `
+        -RemoteAddress LocalSubnet -Action Allow
+
+      # Verificar regra e endereço permitido
+      Get-NetFirewallRule -DisplayName "HTTP Local Server (Local Subnet)" |
+          Get-NetFirewallAddressFilter | Select-Object RemoteAddress
+      ```
+
+8. **Acessando servidores em outra máquina** <br>
+Conecte outra máquina na mesma rede, que será usada como client. <br>
+Lembre de utilizar o IP da sua máquina servidor, que foi anotado no passo 7. <br>
+Então, substitua `<ip-servidor-local>` pelo seu IP.
+  - HTTP:
+    - Acesse com seu browser 
+    - `http://<ip-servidor-local>:8000/docs`
+  - FTP:
+    - Utilize algum cliente FTP como o FileZilla (Linux e Windows) ou WinSCP (Windows)
+    - Hostname: `<ip-servidor-local>`
+    - Porta: 21
+    - Usuário: guest
+    - Senha: (vazio)
+
+1. **Visualize o tráfego de rede**
+- Acesse os endpoints do servidor HTTP com seu client e/ou movimente arquivos entre do client para o servidor com FTP.
+- Na sua máquina servidor, acesse o dashboard: http://localhost:5173/.
+- Visualize o tráfego.
+
+1.  **Removendo regras do firewall (opcional)**
+  - **Use caso não esteja mais utilizando o projeto**. Assim removendo regras desnecessárias do firewall.
+  - Linux (bash - usando UFW)
+    ```bash
+    # Remover regra pelo número da lista
+    sudo ufw status numbered
+    sudo ufw delete <número_da_regra>
+    ```
+  - Windows (PowerShell)
+    ```powershell
+    # Remover regra pelo DisplayName
+    Remove-NetFirewallRule -DisplayName "FTP Control (Local Subnet)"
+    Remove-NetFirewallRule -DisplayName "FTP Passive Range (Local Subnet)"
+    Remove-NetFirewallRule -DisplayName "HTTP Local Server (Local Subnet)"
+    ```
 
 
 ## ⚙ Tecnologias
 - **C#**
   - ASP.NET Web API 9
   - SignalR
+  - Entity Framework 
 - **Postgresql**
 - **Docker**
 - **Javascript**
@@ -93,6 +197,6 @@ Sistema de monitoramento de tráfego em servidores HTTP e FTP, onde é realizado
   - Chart.js
   - Signal Client
 - **Python**
-  - Scapy: captação de pacotes
-  - Fast API: api
-  - pyftpdlib: servidor FTP
+  - Scapy
+  - Fast API
+  - pyftpdlib
