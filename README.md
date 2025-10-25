@@ -162,12 +162,12 @@ Então, substitua `<ip-servidor-local>` pelo seu IP.
     - Usuário: guest
     - Senha: (vazio)
 
-1. **Visualize o tráfego de rede**
+9. **Visualize o tráfego de rede**
 - Acesse os endpoints do servidor HTTP com seu client e/ou movimente arquivos entre do client para o servidor com FTP.
 - Na sua máquina servidor, acesse o dashboard: http://localhost:5173/.
 - Visualize o tráfego.
 
-1.   **Removendo regras do firewall (opcional)**
+10. **Removendo regras do firewall (opcional)**
   - **Use caso não esteja mais utilizando o projeto**. Assim removendo regras desnecessárias do firewall.
   - Linux (bash - usando UFW)
     ```bash
