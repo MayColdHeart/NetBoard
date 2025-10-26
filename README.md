@@ -4,7 +4,9 @@ O objetivo do projeto é analisar o tráfego de rede em uma subnet, então é pr
 
 
 ## ✨ Funcionalidades
-- **Aplicação python**: 
+- **Aplicação python**:
+  - Captação e processamento de pacotes.
+  - Comunicação com API para persitir dados.
 - **API ASP.NET**: 
   - Processamento e persistência do tráfego em banco de dados.
   - Comunicação em tempo real para servir dashboard.
